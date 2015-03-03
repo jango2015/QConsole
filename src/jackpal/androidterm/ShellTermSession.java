@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
+import com.zuowuxuxi.util.FileHelper;
 import com.zuowuxuxi.util.NAction;
 
 import android.annotation.SuppressLint;
@@ -22,6 +23,7 @@ import jackpal.androidterm.emulatorview.TermSession;
 import jackpal.androidterm.emulatorview.UpdateCallback;
 
 import jackpal.androidterm.compat.FileCompat;
+import jackpal.androidterm.util.FileUtils;
 import jackpal.androidterm.util.NStorage;
 import jackpal.androidterm.util.TermSettings;
 
@@ -156,11 +158,16 @@ public class ShellTermSession extends TermSession {
             path = checkPath(path);
         }
         String[] env = new String[18];
+        File filesDir = this.context.getFilesDir();
+
         env[0] = "TERM=" + settings.getTermType();
         env[1] = "PATH=" + this.context.getFilesDir()+"/bin"+":"+path;
+        env[2] = "LD_LIBRARY_PATH=.:"+filesDir+"/lib/"+":"+filesDir+"/:"+filesDir.getParentFile()+"/lib/";
+        env[3] = "PYTHONHOME="+filesDir;
+        env[4] = "ANDROID_PRIVATE="+filesDir;
+        
 
         // HACKED FOR QPython
-        File filesDir = this.context.getFilesDir();
         File externalStorage;
         String code = NAction.getCode(context);
         if (code.startsWith("qpy")) {
@@ -173,11 +180,7 @@ public class ShellTermSession extends TermSession {
         if (!externalStorage.exists()) {
         	externalStorage.mkdir();
         }
-        env[2] = "LD_LIBRARY_PATH="+filesDir+"/lib"+":"+filesDir.getParentFile()+"/files:"+filesDir.getParentFile()+"/lib";
 
-        env[3] = "PYTHONHOME="+filesDir;
-        env[4] = "ANDROID_PRIVATE="+filesDir;
-        
         if (isQPy3) {
 	        env[5] = "PYTHONPATH="
 	        		+externalStorage+"/lib/python3.2/site-packages/:"
@@ -222,7 +225,23 @@ public class ShellTermSession extends TermSession {
         env[15] = "QPY_USERNO="+NAction.getUserNoId(context);
         env[16] = "QPY_ARGUMENT="+NAction.getExtConf(context);
         env[17] = "PYTHONDONTWRITEBYTECODE=1";
+        
+        File enf = new File(context.getFilesDir()+"/bin/init.sh");
+        //if (! enf.exists()) {
+        	String content = "";
+	        for (int i=0;i<env.length;i++) {
+	        	content += "\nexport "+env[i];
+	        }
+        	FileHelper.putFileContents(context, enf.getAbsolutePath(), content.trim());
+			try {
+				FileUtils.chmod(enf, 0755);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
 
+        //}
+        
         createSubprocess(processId, settings.getShell(), env);
         mProcId = processId[0];
 
@@ -286,6 +305,7 @@ public class ShellTermSession extends TermSession {
             arg0 = argList.get(0);
             args = argList.toArray(new String[1]);
         }
+
 
         mTermFd = Exec.createSubprocess(arg0, args, env, processId);
     }

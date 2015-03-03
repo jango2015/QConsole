@@ -525,7 +525,12 @@ public class Term extends Activity implements UpdateCallback {
 	private TermSession createTermSession(String[] mArgs) {
         TermSettings settings = mSettings;
         TermSession session;
-        session = createTermSession(this, settings, mArgs[0], "");
+        if (mArgs!=null &&mArgs.length>1 ) {
+            session = createTermSession(this, settings, mArgs[0], mArgs[1]);
+        } else {
+            session = createTermSession(this, settings, mArgs[0], "");
+        }
+        
         session.setFinishCallback(mTermService);
         return session;
     }
@@ -538,9 +543,9 @@ public class Term extends Activity implements UpdateCallback {
         String scmd = "";
         
         if (code.startsWith("lua")) {
-	        scmd = "lua";
+	        scmd = getApplicationContext().getFilesDir()+"/bin/lua";
 	    	if (Build.VERSION.SDK_INT >= 20) { 
-	    		scmd = "lua-android5";
+	    		scmd = getApplicationContext().getFilesDir()+"/bin/lua-android5";
 	
 	    	} 
 	        if (mArgs==null) {
@@ -559,19 +564,18 @@ public class Term extends Activity implements UpdateCallback {
 	            mArgs = null;
 	        }
         } else {
-	        scmd = "python";
+	        scmd = "source "+getApplicationContext().getFilesDir()+"/bin/init.sh &&"+getApplicationContext().getFilesDir()+"/bin/python";
 	    	if (Build.VERSION.SDK_INT >= 20) { 
-	    		scmd = "python-android5";
+	    		scmd = "source "+getApplicationContext().getFilesDir()+"/bin/init.sh &&"+getApplicationContext().getFilesDir()+"/bin/python-android5";
 	    	} 
 	        if (mArgs==null) {
 	        	if (Build.VERSION.SDK_INT >= 20) { 
-	            	settings.mShell = getApplicationContext().getFilesDir()+"/bin/python-android5";
+	            	scmd = "source "+getApplicationContext().getFilesDir()+"/bin/init.sh &&"+getApplicationContext().getFilesDir()+"/bin/python-android5"+" && sh "+getFilesDir()+"/bin/end.sh && exit";
 	
 	        	} else {
-	            	settings.mShell = getApplicationContext().getFilesDir()+"/bin/python";
+	            	scmd = "source "+getApplicationContext().getFilesDir()+"/bin/init.sh &&"+getApplicationContext().getFilesDir()+"/bin/python"+" && sh "+getFilesDir()+"/bin/end.sh && exit";
 	
 	        	}
-	        	scmd = "";
 	            session = createTermSession(this, settings, scmd, "");
 	
 	        } else {
