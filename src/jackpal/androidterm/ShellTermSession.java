@@ -226,19 +226,20 @@ public class ShellTermSession extends TermSession {
         env[16] = "QPY_ARGUMENT="+NAction.getExtConf(context);
         env[17] = "PYTHONDONTWRITEBYTECODE=1";
         
+        
         File enf = new File(context.getFilesDir()+"/bin/init.sh");
         //if (! enf.exists()) {
-        	String content = "";
-	        for (int i=0;i<env.length;i++) {
-	        	content += "\nexport "+env[i];
-	        }
-        	FileHelper.putFileContents(context, enf.getAbsolutePath(), content.trim());
-			try {
-				FileUtils.chmod(enf, 0755);
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
+    	String content = "#!/system/bin/sh";
+        for (int i=0;i<env.length;i++) {
+        	content += "\nexport "+env[i];
+        }
+    	FileHelper.putFileContents(context, enf.getAbsolutePath(), content.trim());
+		try {
+			FileUtils.chmod(enf, 0755);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 
         //}
         

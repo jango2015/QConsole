@@ -530,7 +530,6 @@ public class Term extends Activity implements UpdateCallback {
         } else {
             session = createTermSession(this, settings, mArgs[0], "");
         }
-        
         session.setFinishCallback(mTermService);
         return session;
     }
@@ -556,33 +555,37 @@ public class Term extends Activity implements UpdateCallback {
 	        	}	
 	        	scmd = "";
 	            session = createTermSession(this, settings, scmd, "");
-	
 	        } else {
 	        	//String content = FileHelper.getFileContents(mArgs[0]);
 	        	String cmd = scmd;
 	            session = createTermSession(this, settings, cmd+" "+mArgs[0]+"", mArgs[1]);
 	            mArgs = null;
 	        }
+	        
         } else {
-	        scmd = "source "+getApplicationContext().getFilesDir()+"/bin/init.sh &&"+getApplicationContext().getFilesDir()+"/bin/python";
+	        
 	    	if (Build.VERSION.SDK_INT >= 20) { 
-	    		scmd = "source "+getApplicationContext().getFilesDir()+"/bin/init.sh &&"+getApplicationContext().getFilesDir()+"/bin/python-android5";
-	    	} 
+		        scmd = scmd = getApplicationContext().getFilesDir()+"/bin/qpython-android5.sh";;
+	    	}  else {
+		        scmd = scmd = getApplicationContext().getFilesDir()+"/bin/qpython.sh";;
+
+	    	}
+	    	
 	        if (mArgs==null) {
 	        	if (Build.VERSION.SDK_INT >= 20) { 
-	            	scmd = "source "+getApplicationContext().getFilesDir()+"/bin/init.sh &&"+getApplicationContext().getFilesDir()+"/bin/python-android5"+" && sh "+getFilesDir()+"/bin/end.sh && exit";
+	            	scmd = getApplicationContext().getFilesDir()+"/bin/qpython-android5.sh && exit";
 	
 	        	} else {
-	            	scmd = "source "+getApplicationContext().getFilesDir()+"/bin/init.sh &&"+getApplicationContext().getFilesDir()+"/bin/python"+" && sh "+getFilesDir()+"/bin/end.sh && exit";
+	            	scmd = getApplicationContext().getFilesDir()+"/bin/qpython.sh && exit";
 	
 	        	}
 	            session = createTermSession(this, settings, scmd, "");
 	
 	        } else {
+	        	
 	        	//String content = FileHelper.getFileContents(mArgs[0]);
 	        	//String cmd = settings.getInitialCommand().equals("")?scmd:settings.getInitialCommand();
-	        	String cmd = scmd;
-	            session = createTermSession(this, settings, cmd+" "+mArgs[0]+"", mArgs[1]);
+	            session = createTermSession(this, settings, scmd+" "+mArgs[0]+" && exit", mArgs[1]);
 	            mArgs = null;	
 	        }
         }
