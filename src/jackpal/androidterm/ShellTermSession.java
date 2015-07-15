@@ -63,11 +63,11 @@ public class ShellTermSession extends TermSession {
         @Override
         public void handleMessage(Message msg) {
             if (!isRunning()) {
-            	Log.d("TERM", "isRunning");
+            	//Log.d("TERM", "isRunning");
                 return;
             }
             if (msg.what == PROCESS_EXITED) {
-            	Log.d("TERM", "PROCESS_EXITED");
+            	//Log.d("TERM", "PROCESS_EXITED");
 
                 onProcessExit((Integer) msg.obj);
             }
@@ -106,7 +106,7 @@ public class ShellTermSession extends TermSession {
              }
         };
         mWatcherThread.setName("Process watcher");
-        Log.d(TermDebug.LOG_TAG, "ShellTermSession:"+cmd);
+        //Log.d(TermDebug.LOG_TAG, "ShellTermSession:"+cmd);
     }
 
     public void shellRun() {
@@ -135,7 +135,7 @@ public class ShellTermSession extends TermSession {
         	}
         }*/
         
-        Log.d("ShellTermSession", "initializeSession:"+cmd+"-"+isQPy3);
+        //Log.d("ShellTermSession", "initializeSession:"+cmd+"-"+isQPy3);
         TermSettings settings = mSettings;
 
         int[] processId = new int[1];
@@ -279,7 +279,7 @@ public class ShellTermSession extends TermSession {
     }
 
     private void sendInitialCommand(String initialCommand) {
-    	Log.d("TERM", "sendInitialCommand:"+initialCommand);
+    	//Log.d("TERM", "sendInitialCommand:"+initialCommand);
         if (initialCommand.length() > 0) {
             write(initialCommand + '\r');
         }
@@ -392,7 +392,7 @@ public class ShellTermSession extends TermSession {
 
     @Override
     public void finish() {
-    	Log.d("ShellTermSession", "finish");
+    	//Log.d("ShellTermSession", "finish");
         Exec.hangupProcessGroup(mProcId);
         Exec.close(mTermFd);
         super.finish();

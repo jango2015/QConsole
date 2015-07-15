@@ -513,7 +513,7 @@ public class Term extends Activity implements UpdateCallback {
     }
 
     protected static TermSession createTermSession(Context context, TermSettings settings, String initialCommand, String path) {
-    	Log.d("Term", "createTermSession:"+initialCommand);
+    	//Log.d("Term", "createTermSession:"+initialCommand);
         ShellTermSession session = new ShellTermSession(context, settings, initialCommand, path);
         // XXX We should really be able to fetch this from within TermSession
         session.setProcessExitMessage(context.getString(R.string.process_exit_message));
@@ -793,7 +793,7 @@ public class Term extends Activity implements UpdateCallback {
         } else if (id == ActionBarCompat.ID_HOME) {
         	closeWindow();
         } else {
-        	Log.d(TAG, "onOptionsItemSelected:");
+        	//Log.d(TAG, "onOptionsItemSelected:");
         }
         // Hide the action bar if appropriate
         if (mActionBarMode == TermSettings.ACTION_BAR_MODE_HIDES) {
@@ -1354,7 +1354,7 @@ public class Term extends Activity implements UpdateCallback {
 			if (bind.listFiles()!=null) {
 				for (File bin : bind.listFiles()) {
 					try {
-			  			Log.d(TAG, "chmod:"+bin.getAbsolutePath());
+			  			//Log.d(TAG, "chmod:"+bin.getAbsolutePath());
 			          
 						FileUtils.chmod(bin, 0755);
 					} catch (Exception e1) {
