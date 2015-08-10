@@ -17,6 +17,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
 
 import jackpal.androidterm.emulatorview.ColorScheme;
 import jackpal.androidterm.emulatorview.TermSession;
@@ -37,7 +38,7 @@ public class ShellTermSession extends TermSession {
     private static final boolean VTTEST_MODE = false;
     private TermSettings mSettings;
     private Context context;
-
+    
     private int mProcId;
     private FileDescriptor mTermFd;
     private Thread mWatcherThread;
@@ -118,6 +119,38 @@ public class ShellTermSession extends TermSession {
 
     }
     
+    public static void loadLibrary(File libPath) {
+        
+        System.load(libPath+"/libsdl.so");
+        System.load(libPath+"/libsdl_image.so");
+        System.load(libPath+"/libsdl_ttf.so");
+        System.load(libPath+"/libsdl_mixer.so");
+        try {
+			System.load(libPath+"/libpython2.7.so");
+	        System.load(libPath+"/libapplication.so");
+	        System.load(libPath+"/libsdl_main.so");
+	        System.load(libPath+"/libsqlite3.so");
+        } catch(UnsatisfiedLinkError e) {
+        }
+        //String libPath = new File(Environment.getExternalStorageDirectory(), mActivity.getPackageName()).toString()+"/"+CONF.DFROM_LIB;
+
+        try {
+            System.load(libPath + "/lib/python2.7/lib-dynload/_io.so");
+            System.load(libPath + "/lib/python2.7/lib-dynload/unicodedata.so");
+            System.load(libPath + "/lib/python2.7/lib-dynload/_sqlite3.so");
+        } catch(UnsatisfiedLinkError e) {
+        	Log.d(TermDebug.LOG_TAG, ""+e.getMessage());
+        }
+        
+        /*try {
+            System.load(libPath + "/lib/python2.7/lib-dynload/_imaging.so");
+            System.load(libPath + "/lib/python2.7/lib-dynload/_imagingft.so");
+            System.load(libPath + "/lib/python2.7/lib-dynload/_imagingmath.so");
+        } catch(UnsatisfiedLinkError e) {
+        }*/
+    }
+
+    
     public void updatePrefs(TermSettings settings) {
         mSettings = settings;
         setColorScheme(new ColorScheme(settings.getColorScheme()));
@@ -157,7 +190,7 @@ public class ShellTermSession extends TermSession {
         if (settings.verifyPath()) {
             path = checkPath(path);
         }
-        String[] env = new String[18];
+        String[] env = new String[20];
         File filesDir = this.context.getFilesDir();
 
         env[0] = "TERM=" + settings.getTermType();
@@ -225,8 +258,9 @@ public class ShellTermSession extends TermSession {
         env[15] = "QPY_USERNO="+NAction.getUserNoId(context);
         env[16] = "QPY_ARGUMENT="+NAction.getExtConf(context);
         env[17] = "PYTHONDONTWRITEBYTECODE=1";
-        
-        
+        env[18] = "TMP="+externalStorage+"/cache";
+        env[19] = "ANDROID_APP_PATH="+externalStorage+"";
+
         File enf = new File(context.getFilesDir()+"/bin/init.sh");
         //if (! enf.exists()) {
     	String content = "#!/system/bin/sh";
@@ -242,6 +276,9 @@ public class ShellTermSession extends TermSession {
 		}
 
         //}
+        //File libPath = context.getFilesDir();
+        //loadLibrary(libPath);
+
         
         createSubprocess(processId, settings.getShell(), env);
         mProcId = processId[0];
