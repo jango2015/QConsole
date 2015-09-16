@@ -25,7 +25,9 @@ import java.text.Collator;
 import java.util.Arrays;
 import java.util.Locale;
 
+import com.zuowuxuxi.util.FileUtils;
 import com.zuowuxuxi.util.NAction;
+import com.zuowuxuxi.util.StringUtils;
 
 //import com.hipipal.sl4alib.PyScriptService2;
 
@@ -70,6 +72,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.zuowuxuxi.common.AssetExtract;
+import com.zuowuxuxi.common.ResourceManager;
+
 import jackpal.androidterm.emulatorview.ColorScheme;
 import jackpal.androidterm.emulatorview.EmulatorView;
 import jackpal.androidterm.emulatorview.TermSession;
@@ -80,7 +85,6 @@ import jackpal.androidterm.compat.ActivityCompat;
 import jackpal.androidterm.compat.AndroidCompat;
 import jackpal.androidterm.compat.MenuItemCompat;
 import jackpal.androidterm.util.FileHelper;
-import jackpal.androidterm.util.FileUtils;
 import jackpal.androidterm.util.SessionList;
 import jackpal.androidterm.util.TermSettings;
 
@@ -289,15 +293,15 @@ public class Term extends Activity implements UpdateCallback {
 	        File externalStorage = new File(Environment.getExternalStorageDirectory(), "com.hipipal.qpyplus");
 	
 	        if (isQPy3) {
-		        unpackData("private3", getFilesDir());
-		        unpackData("public3", new File(externalStorage+"/lib"));
+	        	unpackDataInPyAct("private3", getFilesDir());
+	        	unpackDataInPyAct("public3", new File(externalStorage+"/lib"));
 	
 	        } else {
-		        unpackData("private", getFilesDir());
-		        unpackData("public", new File(externalStorage+"/lib"));
+	        	unpackDataInPyAct("private", getFilesDir());
+	        	unpackDataInPyAct("public", new File(externalStorage+"/lib"));
 	        }
         } else if (code.startsWith("lua") || code.startsWith("texteditor")) {
-            unpackData("private4qe", getFilesDir());
+        	unpackDataInPyAct("private4qe", getFilesDir());
 
         }
         Intent broadcast = new Intent(ACTION_PATH_BROADCAST);
@@ -585,7 +589,7 @@ public class Term extends Activity implements UpdateCallback {
 	        	
 	        	//String content = FileHelper.getFileContents(mArgs[0]);
 	        	//String cmd = settings.getInitialCommand().equals("")?scmd:settings.getInitialCommand();
-	            session = createTermSession(this, settings, scmd+" "+mArgs[0]+" && exit", mArgs[1]);
+	            session = createTermSession(this, settings, scmd+" \""+StringUtils.addSlashes(mArgs[0])+"\" && exit", mArgs[1]);
 	            mArgs = null;	
 	        }
         }
@@ -1280,7 +1284,7 @@ public class Term extends Activity implements UpdateCallback {
         getCurrentEmulatorView().requestFocus();
     }
     
-    public void unpackData(final String resource, File target) {
+    public void unpackDataInPyAct(final String resource, File target) {
         // The version of data in memory and on disk.
         String data_version = resourceManager.getString(resource + "_version");
         String disk_version = "0";

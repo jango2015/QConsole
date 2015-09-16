@@ -9,6 +9,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import com.zuowuxuxi.util.FileHelper;
+import com.zuowuxuxi.util.FileUtils;
 import com.zuowuxuxi.util.NAction;
 
 import android.annotation.SuppressLint;
@@ -24,7 +25,6 @@ import jackpal.androidterm.emulatorview.TermSession;
 import jackpal.androidterm.emulatorview.UpdateCallback;
 
 import jackpal.androidterm.compat.FileCompat;
-import jackpal.androidterm.util.FileUtils;
 import jackpal.androidterm.util.NStorage;
 import jackpal.androidterm.util.TermSettings;
 
