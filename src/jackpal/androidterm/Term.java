@@ -301,9 +301,11 @@ public class Term extends Activity implements UpdateCallback {
 	        	unpackDataInPyAct("public", new File(externalStorage+"/lib"));
 	        }
         } else if (code.startsWith("lua") || code.startsWith("texteditor")) {
+	        File externalStorage = new File(Environment.getExternalStorageDirectory(), "com.quseit.lua5");
         	unpackDataInPyAct("private4qe", getFilesDir());
-
+        	unpackDataInPyAct("public4qe", new File(externalStorage+"/share"));
         }
+        
         Intent broadcast = new Intent(ACTION_PATH_BROADCAST);
         if (AndroidCompat.SDK >= 12) {
             broadcast.addFlags(FLAG_INCLUDE_STOPPED_PACKAGES);
@@ -589,8 +591,17 @@ public class Term extends Activity implements UpdateCallback {
 	        	
 	        	//String content = FileHelper.getFileContents(mArgs[0]);
 	        	//String cmd = settings.getInitialCommand().equals("")?scmd:settings.getInitialCommand();
-	            session = createTermSession(this, settings, scmd+" \""+StringUtils.addSlashes(mArgs[0])+"\" && exit", mArgs[1]);
-	            mArgs = null;	
+	        	if (mArgs.length<3) {
+	        		session = createTermSession(this, settings, scmd+" \""+StringUtils.addSlashes(mArgs[0])+"\" && exit", mArgs[1]);
+	        		mArgs = null;	
+	        	} else {
+	        		String cm = "";
+	        		for (int i=0;i<mArgs.length-1;i++) {
+	        			cm += " "+mArgs[i]+" ";
+	        		}
+	        		session = createTermSession(this, settings, scmd+" "+cm+" && exit", mArgs[1]);
+	        		mArgs = null;
+	        	}
 	        }
         }
         session.setFinishCallback(mTermService);

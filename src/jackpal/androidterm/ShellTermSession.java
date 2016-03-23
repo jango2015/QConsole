@@ -216,11 +216,11 @@ public class ShellTermSession extends TermSession {
 
         if (isQPy3) {
 	        env[5] = "PYTHONPATH="
-	        		+externalStorage+"/lib/python3.2/site-packages/:"
     				+filesDir+"/lib/python3.2/lib/:"
     				+filesDir+"/lib/python3.2/site-packages/:"
     				+filesDir+"/lib/python3.2/python32.zip:"
     				+filesDir+"/lib/python3.2/lib-dynload/:"
+    				+externalStorage+"/lib/python3.2/site-packages/:"
 	        		+pyPath;
 	        
 	        env[14] = "IS_QPY3=1";
@@ -229,11 +229,11 @@ public class ShellTermSession extends TermSession {
         } else {
 
 	        env[5] = "PYTHONPATH="
-	        		+externalStorage+"/lib/python2.7/site-packages/:"
 	        		+filesDir+"/lib/python2.7/site-packages/:"	        		
 	        		+filesDir+"/lib/python2.7/:"
 	        		+filesDir+"/lib/python27.zip:"
-	        		+filesDir+"/lib/python2.7/lib-dynload/:"	       
+	        		+filesDir+"/lib/python2.7/lib-dynload/:"	   
+	        		+externalStorage+"/lib/python2.7/site-packages/:"
 	        		+pyPath;
 	        
 	        //env[14] = "IS_QPY2=1";
